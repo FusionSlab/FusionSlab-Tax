@@ -1,1 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FusionSlab</title>
 
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    color: #111;
+}
+
+.header {
+    background: #0a3d91;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+button {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    background: #00c6ff;
+    color: black;
+}
+
+button:hover {
+    background: #00a2d8;
+}
+
+.icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.hero h2 {
+    font-size: 34px;
+    margin-bottom: 5px;
+}
+
+.hero p {
+    color: #666;
+}
+
+.panel {
+    background: #f5f7fa;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+input {
+    width: 80%;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.result {
+    margin-top: 30px;
+    display: none;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+}
+
+.result.active {
+    display: block;
+}
+
+.result-header {
+    background: #0a3d91;
+    color: white;
+    padding: 15px;
+    font-weight: bold;
+}
+
+.result-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.section {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.section-title {
+    font-weight: bold;
+    color: #0a3d91;
+}
+
+.value {
+    font-weight: bold;
+}
+
+.pop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.pop-box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    background: #fafafa;
+}
+
+.pop-label {
+    font-size: 12px;
+    color: #777;
+}
+
+.pop-value {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+/* ✅ ONLY CHANGE */
+.info-block div {
+    margin-bottom: 12px;
+}
+
+#authModal {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.auth-box {
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    width:320px;
+    text-align:center;
+}
+
+.auth-box input {
+    width:90%;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <button id="leftBtn" onclick="goSubmit()">Submit</button>
+    </div>
+
+    <img src="FusionSlab.png" alt="FusionSlab Logo" style="height:40px;">
+
+    <div class="header-right">
+        <button class="icon-btn" onclick="openAuth()">👤</button>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="hero">
+        <h2>Verify a Certified Record</h2>
+        <p>Access authenticated entries from the FusionSlab database</p>
+    </div>
+
+    <div class="panel">
+
+        <input type="text" style="display:none" autocomplete="username">
+        <input type="password" style="display:none" autocomplete="current-password">
+
+        <input id="certSearch" placeholder="Enter Certification Number">
+
+        <br><br>
+        <button id="lookupBtn" onclick="verify()">Lookup Record</button>
+    </div>
+
+    <div class="result" id="resultBox"></div>
+
+</div>
+
+<div id="authModal">
+    <div class="auth-box">
+
+        <h3>Sign In</h3>
+
+        <input id="authEmail" placeholder="Email">
+        <input id="authPass" type="password" placeholder="Password">
+
+        <button onclick="signIn()" style="width:95%;margin-top:10px;">Sign In</button>
+        <button onclick="signUp()" style="width:95%;margin-top:10px;">Sign Up</button>
+        <button onclick="closeAuth()" style="width:95%;margin-top:10px;background:#ddd;">Exit</button>
+
+        <p id="authStatus"></p>
+
+    </div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBimLxcEZPGYY7KJbX3zKsR_eFCfqPvxHg",
+  authDomain: "fusionslab-cert-verification.firebaseapp.com",
+  databaseURL: "https://fusionslab-cert-verification-default-rtdb.firebaseio.com",
+  projectId: "fusionslab-cert-verification",
+  storageBucket: "fusionslab-cert-verification.firebasestorage.app",
+  messagingSenderId: "762081069903",
+  appId: "1:762081069903:web:d7a070ce1094987c15d33a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+window.openAuth = () => document.getElementById("authModal").style.display = "flex";
+window.closeAuth = () => document.getElementById("authModal").style.display = "none";
+
+window.signIn = async () => {
+    const email = document.getElementById("authEmail").value;
+    const pass = document.getElementById("authPass").value;
+    const status = document.getElementById("authStatus");
+
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
+        status.innerText = "Signed In";
+    } catch (e) {
+        status.innerText = e.message;
+    }
+};
+
+window.signUp = async () => {
+    const email = document.getElementById("authEmail").value;
+    const pass = document.getElementById("authPass").value;
+    const status = document.getElementById("authStatus");
+
+    try {
+        await createUserWithEmailAndPassword(auth, email, pass);
+        status.innerText = "Account Created";
+    } catch (e) {
+        status.innerText = e.message;
+    }
+};
+
+window.verify = async function () {
+    const cert = document.getElementById("certSearch").value.trim();
+    const box = document.getElementById("resultBox");
+
+    const snap = await get(ref(db, cert));
+    box.classList.add("active");
+
+    if (!snap.exists()) {
+        box.innerHTML = `<div class="result-header">Not Found</div>`;
+        return;
+    }
+
+    const d = snap.val();
+
+    document.getElementById("lookupBtn").style.display = "none";
+    document.getElementById("leftBtn").innerText = "Home Page";
+    document.getElementById("leftBtn").onclick = resetHome;
+
+    box.innerHTML = `
+        <div class="result-header">Cert # ${cert}</div>
+
+        <div class="result-body">
+
+            <div class="section">
+                <div class="section-title">Full Name</div>
+                <div class="value">${d.fullName || "N/A"}</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Front</div>
+                ${d.image1 ? `<img src="${d.image1}" style="width:100%;border-radius:8px;">` : "N/A"}
+            </div>
+
+            <div class="section">
+                <div class="section-title">Back</div>
+                ${d.image2 ? `<img src="${d.image2}" style="width:100%;border-radius:8px;">` : "N/A"}
+            </div>
+
+            <div class="section">
+                <div class="section-title">Population</div>
+                <div class="pop-grid">
+                    <div class="pop-box"><div class="pop-label">With Grade</div><div class="pop-value">${d.popGrade || "N/A"}</div></div>
+                    <div class="pop-box"><div class="pop-label">With Higher Grade</div><div class="pop-value">${d.popHigher || "N/A"}</div></div>
+                    <div class="pop-box"><div class="pop-label">With Lower Grade</div><div class="pop-value">${d.popLower || "N/A"}</div></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Value</div>
+                <div class="value">${d.value || "N/A"}</div>
+            </div>
+
+            <div class="section info-block">
+    ${d.subject ? `<div>Subject: ${d.subject}</div>` : ""}
+    ${d.brand ? `<div>Brand: ${d.brand}</div>` : ""}
+    ${d.category ? `<div>Category: ${d.category}</div>` : ""}
+    ${d.set ? `<div>Set: ${d.set}</div>` : ""}
+    ${d.team ? `<div>Team: ${d.team}</div>` : ""}
+    ${d.year ? `<div>Year: ${d.year}</div>` : ""}
+    ${d.notation ? `<div>Notation: ${d.notation}</div>` : ""}
+    ${d.variety ? `<div>Variety: ${d.variety}</div>` : ""}
+    ${d.finish ? `<div>Finish: ${d.finish}</div>` : ""}
+    ${d.rarity ? `<div>Rarity: ${d.rarity}</div>` : ""}
+    ${d.notes ? `<div>Additional Notes: ${d.notes}</div>` : ""}
+</div>
+        </div>
+    `;
+};
+
+window.resetHome = function () {
+    document.getElementById("certSearch").value = "";
+    document.getElementById("resultBox").classList.remove("active");
+    document.getElementById("lookupBtn").style.display = "inline-block";
+    document.getElementById("leftBtn").innerText = "Submit";
+    document.getElementById("leftBtn").onclick = goSubmit;
+};
+
+window.goSubmit = function () {
+    window.location.href = "https://fusionslab.github.io/FusionSlab-Submission-Center/";
+};
+
+</script>
+
+</body>
+</html>
