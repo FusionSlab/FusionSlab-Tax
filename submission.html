@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FusionSlab Submission Center</title>
+
+  <style>
+    body { font-family: Arial; margin:0; background:#f5f6f8; }
+
+    .header {
+      background:#0033a0;
+      color:white;
+      padding:18px;
+      text-align:center;
+      font-size:24px;
+      font-weight:bold;
+    }
+
+    .container {
+      max-width:800px;
+      margin:30px auto;
+      background:white;
+      padding:25px;
+      border-radius:6px;
+    }
+
+    .step { display:none; }
+    .active { display:block; }
+
+    input, select {
+      width:100%;
+      padding:10px;
+      margin-top:5px;
+    }
+
+    label { display:block; margin-top:12px; font-weight:bold; }
+
+    button {
+      margin-top:20px;
+      padding:10px 15px;
+      background:#d71920;
+      color:white;
+      border:none;
+      cursor:pointer;
+    }
+
+    .tier-box {
+      border:2px solid #ccc;
+      padding:15px;
+      margin-top:15px;
+      cursor:pointer;
+      border-radius:6px;
+      display:flex;
+      justify-content:space-between;
+    }
+
+    .tier-selected {
+      border-color:#0033a0;
+      background:#e6edff;
+    }
+
+    .tier-price {
+      font-weight:bold;
+      color:black;
+    }
+
+    .nav {
+      display:flex;
+      justify-content:space-between;
+    }
+
+    .step.active {
+      pointer-events: auto;
+    }
+
+    .action-row {
+      display:flex;
+      gap:10px;
+      margin-top:15px;
+    }
+
+    .action-row button:last-child {
+      margin-left:auto;
+    }
+  </style>
+  <!-- EMAILJS (ADDED ONLY) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    emailjs.init({ publicKey: "-rXlMZTTg7hton9TE" });
+  </script>
+<!-- CONFETTI LIBRARY -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="header">FusionSlab Submission Center</div>
+
+<div class="container">
+
+<!-- ACCOUNT -->
+<div class="step active" id="accountPage">
+  <h2>Account</h2>
+  <input id="name" placeholder="Name">
+  <input id="email" placeholder="Email">
+  <button onclick="show('servicePage')">Next</button>
+</div>
+
+<!-- SERVICE -->
+<div class="step" id="servicePage">
+  <h2>Select Service</h2>
+
+  <div class="tier-box" onclick="selectService('Grading')"><strong>Grading</strong></div>
+  <div class="tier-box" onclick="selectService('Autographed')"><strong>Autographed</strong></div>
+  <div class="tier-box" onclick="selectService('Authentication')"><strong>Authentication</strong></div>
+  <div class="tier-box" onclick="selectService('Reholder')"><strong>Reholder</strong></div>
+
+  <div class="nav">
+    <button onclick="show('accountPage')">Back</button>
+    <button onclick="goService()">Next</button>
+  </div>
+</div>
+
+<!-- GRADING -->
+<div class="step" id="gradingPage">
+  <h2>Grading / Autographed Tiers</h2>
+
+  <div class="tier-box" onclick="setTier(this,'Value',15)">
+    <div>
+      <strong>Value</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $100<br>
+        Estimated Turnaround Time: 60 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$15</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Regular',25)">
+    <div>
+      <strong>Regular</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $500<br>
+        Estimated Turnaround Time: 45 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$25</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Express',40)">
+    <div>
+      <strong>Express</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $1,000<br>
+        Estimated Turnaround Time: 30 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$40</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Premium',90)">
+    <div>
+      <strong>Premium</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $7,500<br>
+        Estimated Turnaround Time: 15 Bussiness Days
+      </div>
+    </div>
+    <div class="tier-price">$90</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Walkthrough',150)">
+    <div>
+      <strong>Walkthrough</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: UNLIMITED<br>
+        Estimated Turnaround Time: 7 Bussiness Days
+      </div>
+    </div>
+    <div class="tier-price">$150</div>
+  </div>
+
+  <div class="nav">
+    <button onclick="show('servicePage')">Back</button>
+    <button onclick="show('itemPage')">Next</button>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div class="step" id="authPage">
+  <h2>Authentication Tiers</h2>
+
+  <div class="tier-box" onclick="setTier(this,'Value',10)">
+    <div>
+      <strong>Value</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $100<br>
+        Estimated Turnaround Time: 60 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$10</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Regular',18)">
+    <div>
+      <strong>Regular</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $500<br>
+        Estimated Turnaround Time: 45 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$18</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Express',30)">
+    <div>
+      <strong>Express</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $1,000<br>
+        Estimated Turnaround Time: 30 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$30</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Premium',75)">
+    <div>
+      <strong>Premium</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $7,500<br>
+        Estimated Turnaround Time: 15 Bussiness Days
+      </div>
+    </div>
+    <div class="tier-price">$75</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Walkthrough',125)">
+    <div>
+      <strong>Walkthrough</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: UNLIMITED<br>
+        Estimated Turnaround Time: 7 Bussiness Days
+      </div>
+    </div>
+    <div class="tier-price">$125</div>
+  </div>
+
+  <div class="nav">
+    <button onclick="show('servicePage')">Back</button>
+    <button onclick="show('itemPage')">Next</button>
+  </div>
+</div>
+
+<!-- REHOLDER -->
+<div class="step" id="reholderPage">
+  <h2>Reholder Tiers</h2>
+
+  <div class="tier-box" onclick="setTier(this,'Value',10)">
+    <div>
+      <strong>Value</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $100<br>
+        Estimated Turnaround Time: 60 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$10</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Regular',15)">
+    <div>
+      <strong>Regular</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $500<br>
+        Estimated Turnaround Time: 45 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$15</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Express',25)">
+    <div>
+      <strong>Express</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $1,000<br>
+        Estimated Turnaround Time: 30 Business Days
+      </div>
+    </div>
+    <div class="tier-price">$25</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Premium',40)">
+    <div>
+      <strong>Premium</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: $7,500<br>
+        Estimated Turnaround Time: 15 Bussiness Days
+      </div>
+    </div>
+    <div class="tier-price">$40</div>
+  </div>
+
+  <div class="tier-box" onclick="setTier(this,'Walkthrough',60)">
+    <div>
+      <strong>Walkthrough</strong>
+      <div style="font-size:12px;margin-top:5px;">
+        Max Declared Value: UNLIMITED<br>
+        Estimated Turnaround Time: 7 Bussiness Days
+      </div>
+    </div>
+    <div class="tier-price">$60</div>
+  </div>
+
+  <div class="nav">
+    <button onclick="show('servicePage')">Back</button>
+    <button onclick="show('itemPage')">Next</button>
+  </div>
+</div>
+
+<!-- ITEM PAGE -->
+<div class="step" id="itemPage">
+  <h2>Select Type</h2>
+
+  <div id="cardTypeList">
+    <div class="tier-box" onclick="selectCardType(this,'Pokemon')">Pokemon</div>
+    <div class="tier-box" onclick="selectCardType(this,'Amiibo')">Amiibo</div>
+    <div class="tier-box" onclick="selectCardType(this,'Digimon')">Digimon</div>
+    <div class="tier-box" onclick="selectCardType(this,'Dragon Ball')">Dragon Ball</div>
+    <div class="tier-box" onclick="selectCardType(this,'Garbage Pail Cards')">Garbage Pail</div>
+    <div class="tier-box" onclick="selectCardType(this,'Lorcana')">Lorcana</div>
+    <div class="tier-box" onclick="selectCardType(this,'Marvel')">Marvel</div>
+    <div class="tier-box" onclick="selectCardType(this,'Magic: The Gathering')">Magic: The Gathering</div>
+    <div class="tier-box" onclick="selectCardType(this,'One Piece')">One Piece</div>
+    <div class="tier-box" onclick="selectCardType(this,'Star Wars')">Star Wars</div>
+    <div class="tier-box" onclick="selectCardType(this,'YuGiOh')">YuGiOh</div>
+    <div class="tier-box" onclick="selectCardType(this,'Sports')">Sports</div>
+    <div class="tier-box" onclick="selectCardType(this,'Custom')">Custom</div>
+  </div>
+
+  <div class="nav">
+    <button onclick="show('gradingPage')">Back</button>
+    <button onclick="goToDetails()">Next</button>
+  </div>
+</div>
+
+<!-- ITEM DETAILS -->
+<div class="step" id="itemDetailsPage">
+  <h2>Add Card Details</h2>
+
+  <div id="dynamicFields"></div>
+
+<div class="action-row">
+  <button type="button" onclick="addItem(true)">
+    Add Another Card
+  </button>
+
+  <button type="button" onclick="addItem(false)">
+    Add To Cart
+  </button>
+</div>
+
+  <div id="cart"></div>
+
+  <div class="nav">
+    <button onclick="show('itemPage')">Back</button>
+    <button onclick="show('returnPage')">Next</button>
+  </div>
+</div>
+
+<!-- RETURN ADDRESS -->
+<div class="step" id="returnPage">
+  <h2>Where does this card get returned to?</h2>
+
+  <input id="rName" placeholder="Full Name">
+  <input id="rAddress" placeholder="Address">
+  <input id="rCity" placeholder="City">
+  <input id="rRegion" placeholder="State / Province / Region">
+  <input id="rCountry" placeholder="Country">
+
+  <div class="nav">
+    <button onclick="show('itemDetailsPage')">Back</button>
+    <button onclick="buildReview(); show('reviewPage')">Next</button>
+  </div>
+</div>
+
+<!-- REVIEW -->
+<div class="step" id="reviewPage">
+  <h2>Order Review</h2>
+
+  <div id="reviewBox"></div>
+
+<div style="display:flex; gap:10px; margin-top:10px;">
+  <input id="promo" placeholder="Promo Code" style="flex:1;">
+  <button type="button" onclick="applyPromo()">Apply</button>
+</div>
+
+<div id="promoMessage" style="margin-top:8px;font-weight:bold;"></div>
+
+  <h3>Return Shipping: $14.99</h3>
+  <h3 id="finalTotal">Total: $0</h3>
+
+  <div class="nav">
+    <button onclick="show('returnPage')">Back</button>
+    <button onclick="show('donePage')">Pay Now</button>
+  </div>
+</div>
+
+<!-- DONE -->
+<div class="step" id="donePage">
+<div style="display:flex; flex-direction:column; align-items:center; margin-top:20px;">
+
+  <!-- wrapper so arrow can sit OUTSIDE the wheel -->
+  <div style="position:relative; width:300px; height:300px;">
+
+    <!-- WHEEL -->
+    <canvas id="promoWheel" width="300" height="300"></canvas>
+
+    <!-- ARROW (RIGHT SIDE, POINTING LEFT, TOUCHING EDGE) -->
+    <div style="
+      position:absolute;
+      right:-25px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:28px;
+    ">
+      ⬅️
+    </div>
+
+  </div>
+
+  <!-- BUTTON -->
+  <button id="spinBtn" onclick="spinWheel()">Spin</button>
+
+  <!-- RESULT -->
+  <div id="wheelResult" style="margin-top:15px; font-weight:bold;"></div>
+
+</div>
+<script>
+let service = "";
+let tier = "";
+let price = 0;
+let cards = [];
+const TAX_RULES = {
+  US: {
+    rates: {
+      "AL": 0.04, "AK": 0.00, "AZ": 0.056, "AR": 0.065,
+      "CA": 0.0725, "CO": 0.029, "CT": 0.0635, "DE": 0.00,
+      "FL": 0.06, "GA": 0.04, "HI": 0.04, "ID": 0.06,
+      "IL": 0.0625, "IN": 0.07, "IA": 0.06, "KS": 0.065,
+      "KY": 0.06, "LA": 0.0445, "ME": 0.055, "MD": 0.06,
+      "MA": 0.0625, "MI": 0.06, "MN": 0.06875, "MS": 0.07,
+      "MO": 0.04225, "MT": 0.00, "NE": 0.055, "NV": 0.0685,
+      "NH": 0.00, "NJ": 0.06625, "NM": 0.05125, "NY": 0.04,
+      "NC": 0.0475, "ND": 0.05, "OH": 0.0575, "OK": 0.045,
+      "OR": 0.00, "PA": 0.06, "RI": 0.07, "SC": 0.06,
+      "SD": 0.045, "TN": 0.07, "TX": 0.0625, "UT": 0.0485,
+      "VT": 0.06, "VA": 0.053, "WA": 0.065, "WV": 0.06,
+      "WI": 0.05, "WY": 0.04
+    }
+  },
+
+  CA: { rate: 0.05 },
+  UK: { rate: 0.20 },
+  EU: { rate: 0.21 },
+  OTHER: { rate: 0.07 }
+};
+
+let promoData = {
+  code: "",
+  discount: 0,
+  freeShipping: false
+};
+
+let selectedCardType = "";
+let fieldOrder = [];
+function formatKey(k){
+  if(k === "type") return "Type";
+  if(k === "service") return "Service";
+  if(k === "tier") return "Tier";
+  if(k === "price") return "Price";
+  return k;
+}
+
+function show(id){
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function selectService(s){
+  service = s;
+
+  document.querySelectorAll("#servicePage .tier-box").forEach(b=>{
+    b.classList.remove("tier-selected");
+  });
+
+  event.target.closest(".tier-box").classList.add("tier-selected");
+}
+
+function goService(){
+  if(service === "Grading" || service === "Autographed") return show("gradingPage");
+  if(service === "Authentication") return show("authPage");
+  if(service === "Reholder") return show("reholderPage");
+
+  alert("Please select a service first.");
+}
+
+function setTier(el, t, p){
+  tier = t;
+  price = p;
+  const page = el.closest(".step");
+  page.querySelectorAll(".tier-box").forEach(b=>{
+    b.classList.remove("tier-selected");
+  });
+  el.classList.add("tier-selected");
+}
+
+function selectCardType(el, type){
+  document.querySelectorAll("#cardTypeList .tier-box").forEach(b=>{
+    b.classList.remove("tier-selected");
+  });
+  el.classList.add("tier-selected");
+  selectedCardType = type;
+}
+
+function goToDetails(){
+  if(!selectedCardType){
+    alert("Please select a type.");
+    return;
+  }
+  buildFields();
+  show("itemDetailsPage");
+}
+
+function buildFields(){
+  const container = document.getElementById("dynamicFields");
+  let fields = [];
+
+  const tcgGroup = ["Pokemon","Amiibo","Digimon","Dragon Ball","Garbage Pail Cards","Lorcana","One Piece","Magic: The Gathering"];
+
+  if(tcgGroup.includes(selectedCardType)){
+    fields = ["Year","Set","Character/Card Name","Card Number","Rarity","Finish/Edition"];
+  }
+  else if(selectedCardType === "Sports"){
+    fields = ["Sport","Year","Set","Player","Team","Card #","Variant"];
+  }
+  else if(["Marvel","Star Wars"].includes(selectedCardType)){
+    fields = ["Year","Set","Character/Scene","Card Number","Rarity"];
+  }
+  else if(selectedCardType === "YuGiOh"){
+    fields = ["Year","Set","Card Name","Card #","Rarity","Edition"];
+  }
+  else if(selectedCardType === "Custom"){
+    fields = [
+      "Year",
+      "Set",
+      "Character/Player",
+      "Team",
+      "Card #",
+      "Variant",
+      "Edition",
+      "Finish",
+      "Brand"
+    ];
+  }
+
+  // Always add Notes
+  fields.push("Notes");
+
+  fieldOrder = fields;
+  container.innerHTML = "";
+
+  fields.forEach(f=>{
+    const label = document.createElement("label");
+    label.innerText = f;
+
+    let input;
+
+    // ✅ SPORTS DROPDOWN
+    if(f === "Sport"){
+      input = document.createElement("select");
+
+      [
+        "Baseball",
+        "Basketball",
+        "Football",
+        "Golf",
+        "Hockey",
+        "Racing",
+        "Soccer",
+        "Tennis",
+        "UFC",
+        "Wrestling",
+        "Boxing"
+      ].forEach(s=>{
+        let option = document.createElement("option");
+        option.value = s;
+        option.text = s;
+        input.appendChild(option);
+      });
+    }
+
+    // ✅ NOTES textarea
+    else if(f === "Notes"){
+      input = document.createElement("textarea");
+      input.rows = 3;
+    }
+
+    // default input
+    else{
+      input = document.createElement("input");
+    }
+
+    input.id = "field_" + f.replace(/[^a-zA-Z0-9]/g,'');
+
+    container.appendChild(label);
+    container.appendChild(input);
+  });
+}
+
+function addItem(goBack){
+  let item = {
+    type: selectedCardType,
+    service,
+    tier,
+    price
+  };
+
+  fieldOrder.forEach(f=>{
+    let id = "field_" + f.replace(/[^a-zA-Z0-9]/g,'');
+    let el = document.getElementById(id);
+    item[f] = el ? (el.value || "N/A") : "N/A";
+  });
+
+  cards.push(item);
+  render();
+
+  if(goBack){
+    show("itemPage");
+  }
+}
+
+function render(){
+  document.getElementById("cart").innerHTML =
+    cards.map(c=>`
+      <div style="padding:10px;border-bottom:1px solid #ddd;">
+        <strong>${c.type}</strong><br>
+        ${Object.entries(c).map(([k,v])=>`${formatKey(k)}: ${v}`).join("<br>")}
+      </div>
+    `).join("");
+}
+
+function buildReview(){
+  let box = document.getElementById("reviewBox");
+
+  let html = "";
+
+  cards.forEach((c,i)=>{
+    html += `<div style="border-bottom:1px solid #ddd;padding:10px;">
+      <strong>Card ${i+1}</strong><br>
+      ${Object.entries(c).map(([k,v])=>`${formatKey(k)}: ${v}`).join("<br>")}
+    </div>`;
+  });
+
+  box.innerHTML = html;
+
+  updateFinal();
+}
+
+function updateFinal(){
+  let subtotal = cards.reduce((s,c)=>s+Number(c.price),0);
+
+  let shipping = promoData.freeShipping ? 0 : 14.99;
+
+  let taxRate = getTaxRate();
+
+let discounted = subtotal - promoData.discount;
+let tax = discounted * taxRate;
+
+let total = discounted + shipping + tax;
+
+  document.getElementById("finalTotal").innerText =
+    `Total: $${total.toFixed(2)}`;
+}
+
+function getTaxRate(){
+  let country = (document.getElementById("rCountry").value || "").toUpperCase().trim();
+  let region = (document.getElementById("rRegion").value || "").toUpperCase().trim();
+
+  if(country === "US" || country === "USA" || country === "UNITED STATES"){
+    return TAX_RULES.US.rates[region] ?? 0.07;
+  }
+
+  if(country === "CANADA" || country === "CA"){
+    return TAX_RULES.CA.rate;
+  }
+
+  if(country === "UK" || country === "UNITED KINGDOM" || country === "GB"){
+    return TAX_RULES.UK.rate;
+  }
+
+  const EU = ["FRANCE","GERMANY","SPAIN","ITALY","NETHERLANDS","BELGIUM","PORTUGAL","POLAND","SWEDEN","NORWAY","DENMARK","FINLAND","AUSTRIA","GREECE","IRELAND"];
+
+  if(EU.includes(country)){
+    return TAX_RULES.EU.rate;
+  }
+
+  return TAX_RULES.OTHER.rate;
+}
+function applyPromo(){
+  let code = document.getElementById("promo").value.trim().toUpperCase();
+  let message = document.getElementById("promoMessage");
+
+  let subtotal = cards.reduce((s,c)=>s+Number(c.price),0);
+
+  promoData = {
+    code,
+    discount: 0,
+    freeShipping: false
+  };
+
+  if(code === "FREE SLAB"){
+    if(cards.length >= 5 && (tier === "Value" || tier === "Regular")){
+      promoData.discount = cards[0]?.price || 0;
+      message.innerText = "Free slab applied";
+    } else {
+      message.innerText = "Requires 5+ Value/Regular slabs";
+      return;
+    }
+  }
+
+  else if(code === "10% OFF"){
+    promoData.discount = Math.min(subtotal * 0.10, 100);
+    message.innerText = "10% off applied";
+  }
+
+  else if(code === "SHIP FREE"){
+    promoData.freeShipping = true;
+    message.innerText = "Free shipping applied";
+  }
+
+  else if(code === "SLAB DEAL"){
+    promoData.discount = Math.min(cards.length * 5, 50);
+    message.innerText = "$5 per slab applied";
+  }
+
+  else if(code === "FREE ORDER"){
+    promoData.discount = Math.min(subtotal, 100);
+    message.innerText = "Up to $100 off applied";
+  }
+
+  else {
+    message.innerText = "Invalid promo code";
+    return;
+  }
+
+  updateFinal();
+}
+/* ===== PROMO WHEEL (NEXT ORDER ONLY) ===== */
+
+let wheelSpun = false;
+
+const wheelItems = [
+  "FREE SLAB",
+  "10% OFF",
+  "SHIP FREE",
+  "SLAB DEAL",
+  "FREE ORDER",
+  "NO DEAL"
+];
+
+const wheelDescriptions = {
+  "FREE SLAB": "You get a FREE SLAB on your next order (use code: FREE SLAB)",
+  "10% OFF": "You get 10% OFF your next order (max $100) (use code: 10% OFF)",
+  "SHIP FREE": "You get FREE SHIPPING on your next order (use code: SHIP FREE)",
+  "SLAB DEAL": "You get $5 OFF per slab (max $50) (use code: SLAB DEAL)",
+  "FREE ORDER": "You get up to $100 OFF your next order (use code: FREE ORDER)",
+  "NO DEAL": "No deal this time — try again next order!"
+};
+
+let canvas, ctx;
+let angle = 0;
+
+/* wait until DONE page exists */
+setTimeout(() => {
+  canvas = document.getElementById("promoWheel");
+  if (canvas) {
+    ctx = canvas.getContext("2d");
+    drawWheel();
+  }
+}, 300);
+
+function drawWheel() {
+  const center = 150;
+  const radius = 150;
+  const arc = (2 * Math.PI) / wheelItems.length;
+
+  const colors = [
+    "#0033a0",
+    "#d71920",
+    "#2ecc71",
+    "#f39c12",
+    "#9b59b6",
+    "#1abc9c"
+  ];
+
+  for (let i = 0; i < wheelItems.length; i++) {
+    const start = angle + i * arc;
+
+    ctx.beginPath();
+    ctx.fillStyle = colors[i];
+    ctx.moveTo(center, center);
+    ctx.arc(center, center, radius, start, start + arc);
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(start + arc / 2);
+    ctx.fillStyle = "white";
+    ctx.font = "12px Arial";
+    ctx.textAlign = "right";
+    ctx.fillText(wheelItems[i], radius - 10, 5);
+    ctx.restore();
+  }
+}
+
+function spinWheel() {
+  if (wheelSpun) return;
+
+  wheelSpun = true;
+  document.getElementById("spinBtn").disabled = true;
+
+  let spins = 5 + Math.random() * 5;
+  let finalAngle = spins * 2 * Math.PI;
+
+  let duration = 3000;
+  let start = null;
+
+  function animate(timestamp) {
+    if (!start) start = timestamp;
+    let progress = timestamp - start;
+
+    let ease = 1 - Math.pow(1 - progress / duration, 3);
+
+    angle = finalAngle * ease;
+
+    ctx.clearRect(0, 0, 300, 300);
+    drawWheel();
+
+    if (progress < duration) {
+      requestAnimationFrame(animate);
+    } else {
+      finishSpin();
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+function finishSpin() {
+  const arc = (2 * Math.PI) / wheelItems.length;
+
+  let normalized = angle % (2 * Math.PI);
+  let index = Math.floor((wheelItems.length - (normalized / arc)) % wheelItems.length);
+
+  let prize = wheelItems[index];
+
+promoData.code = prize; // ✅ STORE RESULT
+
+  document.getElementById("wheelResult").innerHTML =
+    `<div>You get: ${wheelDescriptions[prize]}</div>`;
+
+  /* ===== CONFETTI EFFECT ===== */
+  confetti({
+    particleCount: 180,
+    spread: 80,
+    origin: { y: 0.6 }
+  });
+
+  /* ===== CHANGE BUTTON INTO FINISH BUTTON ===== */
+  const btn = document.getElementById("spinBtn");
+
+  btn.innerText = "Finish Submission";
+  btn.disabled = false;
+
+  btn.style.background = "#0033a0";
+  btn.style.color = "white";
+
+  btn.onclick = () => {
+  completeOrder();
+};
+}
+function getPromoBenefit(code) {
+  if (code === "FREE SLAB") return "Free slab applied";
+  if (code === "10% OFF") return "10% discount (max $100)";
+  if (code === "SHIP FREE") return "Free shipping applied";
+  if (code === "SLAB DEAL") return "$5 per slab discount (max $50)";
+  if (code === "FREE ORDER") return "Up to $100 off applied";
+  return "No benefit applied";
+}
+/* ===== EMAILJS UPDATED COMPLETE ORDER ONLY ===== */
+function completeOrder() {
+
+  let subtotal = cards.reduce((s,c)=>s+Number(c.price),0);
+  let shipping = promoData.freeShipping ? 0 : 14.99;
+  let taxRate = getTaxRate();
+
+  let discounted = subtotal - promoData.discount;
+  let tax = discounted * taxRate;
+  let total = discounted + shipping + tax;
+
+  const now = new Date();
+
+  let reviewText = cards.map((c,i)=>{
+    return `Card ${i+1}\n` +
+      Object.entries(c).map(([k,v])=>`${formatKey(k)}: ${v}`).join("\n");
+  }).join("\n\n----------------\n\n");
+
+  const params = {
+    name: document.getElementById("name").value || "",
+    email: document.getElementById("email").value || "",
+    address: document.getElementById("rAddress").value || "",
+    city: document.getElementById("rCity").value || "",
+    state: document.getElementById("rRegion").value || "",
+    country: document.getElementById("rCountry").value || "",
+    cardDetails: reviewText,
+    subtotal: subtotal.toFixed(2),
+    shipping: shipping.toFixed(2),
+    total: total.toFixed(2),
+    tax: tax.toFixed(2),
+    taxRate: (taxRate * 100).toFixed(2) + "%",
+    promo: document.getElementById("promo").value || "NONE",
+    timestamp: now.toISOString()
+  };
+
+  emailjs.send("service_vxuhfls", "template_ygmor47", params)
+    .then((res1) => {
+
+      console.log("Email #1 success:", res1);
+
+      const receiptParams = {
+  email: params.email,
+  code: params.promo,
+  promoDetails: wheelDescriptions[promoData.code] || "No benefit",
+  cardDetails: reviewText,
+  total: total.toFixed(2)
+};
+
+      return emailjs.send(
+        "service_vxuhfls",
+        "template_r1iassl",
+        receiptParams
+      );
+    })
+    .then((res2) => {
+
+      console.log("Email #2 success:", res2);
+
+      confetti({
+        particleCount: 200,
+        spread: 90,
+        origin: { y: 0.6 }
+      });
+
+      setTimeout(() => {
+        show("donePage");
+      }, 800);
+
+    })
+    .catch((err) => {
+      console.error("EMAIL ERROR:", err);
+      alert("Email failed to send. Check console.");
+    });
+}
+  
+</script>
+
+</body>
+</html>
