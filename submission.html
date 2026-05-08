@@ -4,68 +4,119 @@
   <title>FusionSlab Submission Center</title>
 
   <style>
-    body { font-family: Arial; margin:0; background:#f5f6f8; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #111;
+    }
 
+    /* HEADER */
     .header {
-      background:#0033a0;
-      color:white;
-      padding:18px;
-      text-align:center;
-      font-size:24px;
-      font-weight:bold;
+      background: #0a3d91;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
     }
 
-    .container {
-      max-width:800px;
-      margin:30px auto;
-      background:white;
-      padding:25px;
-      border-radius:6px;
+    .header-left,
+    .header-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
 
-    .step { display:none; }
-    .active { display:block; }
-
-    input, select {
-      width:100%;
-      padding:10px;
-      margin-top:5px;
-    }
-
-    label { display:block; margin-top:12px; font-weight:bold; }
-
+    /* BUTTONS */
     button {
-      margin-top:20px;
-      padding:10px 15px;
-      background:#d71920;
-      color:white;
-      border:none;
-      cursor:pointer;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      background: #00c6ff;
+      color: black;
+      margin-top: 20px;
     }
 
+    button:hover {
+      background: #00a2d8;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      padding: 0;
+      margin-top: 0;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 6px;
+    }
+
+    /* STEPS */
+    .step {
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    /* INPUTS */
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+
+    /* TIER BOXES */
     .tier-box {
-      border:2px solid #ccc;
-      padding:15px;
-      margin-top:15px;
-      cursor:pointer;
-      border-radius:6px;
-      display:flex;
-      justify-content:space-between;
+      border: 2px solid #ccc;
+      padding: 15px;
+      margin-top: 15px;
+      cursor: pointer;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      transition: 0.2s;
+    }
+
+    .tier-box:hover {
+      background: #f3f7ff;
     }
 
     .tier-selected {
-      border-color:#0033a0;
-      background:#e6edff;
+      border-color: #0033a0;
+      background: #e6edff;
     }
 
     .tier-price {
-      font-weight:bold;
-      color:black;
+      font-weight: bold;
+      color: black;
     }
 
+    /* NAV */
     .nav {
-      display:flex;
-      justify-content:space-between;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
     }
 
     .step.active {
@@ -73,13 +124,13 @@
     }
 
     .action-row {
-      display:flex;
-      gap:10px;
-      margin-top:15px;
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
     }
 
     .action-row button:last-child {
-      margin-left:auto;
+      margin-left: auto;
     }
   </style>
   <!-- EMAILJS (ADDED ONLY) -->
@@ -94,7 +145,21 @@
 
 <body>
 
-<div class="header">FusionSlab Submission Center</div>
+<div class="header">
+
+  <div class="header-left">
+    <button onclick="goHome()">Home Page</button>
+  </div>
+
+  <img src="FusionSlab.png"
+       alt="FusionSlab Logo"
+       style="height:40px;">
+
+  <div class="header-right">
+    <button class="icon-btn">👤</button>
+  </div>
+
+</div>
 
 <div class="container">
 
